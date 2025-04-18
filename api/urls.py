@@ -5,6 +5,7 @@ from . import reports
 from . import random_picker
 from . import whiteboard
 from . import dashboard_views
+from . import champions_views
 
 router = DefaultRouter()
 router.register(r'classes', views.ClassViewSet)
@@ -42,4 +43,12 @@ urlpatterns = [
     path('dashboard/top-students/', dashboard_views.get_top_students, name='dashboard-top-students'),
     path('dashboard/weekly-attendance/', dashboard_views.get_weekly_attendance, name='dashboard-weekly-attendance'),
     path('dashboard/recent-notes/', dashboard_views.get_recent_notes, name='dashboard-recent-notes'),
+
+    # Champions endpoints
+    path('champions/top-attendance/', champions_views.get_top_attendance_students, name='champions-top-attendance'),
+    path('champions/top-assignments/', champions_views.get_top_assignment_students, name='champions-top-assignments'),
+    path('champions/top-positive-notes/', champions_views.get_top_positive_notes_students, name='champions-top-positive-notes'),
+    path('champions/top-grades/', champions_views.get_top_grades_students, name='champions-top-grades'),
+    path('champions/top-quran/', champions_views.get_top_quran_students, name='champions-top-quran'),
+    path('champions/most-improved/', champions_views.get_most_improved_students, name='champions-most-improved'),
 ]
