@@ -152,7 +152,18 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Configure media storage based on environment
+if 'RENDER' in os.environ:
+    # Use Render disk storage for media files
+    RENDER_DISK_MOUNT_PATH = os.environ.get('RENDER_DISK_MOUNT_PATH', '/opt/render/project/storage')
+    MEDIA_ROOT = os.path.join(RENDER_DISK_MOUNT_PATH, 'media')
+
+    # Create necessary directories if they don't exist
+    os.makedirs(os.path.join(MEDIA_ROOT, 'students'), exist_ok=True)
+else:
+    # Use local path for development
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -4,7 +4,7 @@ services:
     name: teachease-backend
     env: python
     buildCommand: ./build.sh
-    startCommand: gunicorn config.wsgi:application
+    startCommand: ./startup.sh
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -20,6 +20,8 @@ services:
         value: https://frontend-smuk.onrender.com,https://teachease-frontend.onrender.com,http://localhost:5173
       - key: PYTHON_VERSION
         value: 3.11.8
+      - key: RENDER_DISK_MOUNT_PATH
+        value: /opt/render/project/storage
 
 # Database
 databases:

@@ -50,12 +50,25 @@ class Subject(models.Model):
             return f"{self.name} ({self.parent_subject.name})"
         return self.name
 
+def validate_image_size(image):
+    """التحقق من حجم الصورة (الحد الأقصى 2 ميجابايت)"""
+    if image.size > 2 * 1024 * 1024:  # 2MB
+        from django.core.exceptions import ValidationError
+        raise ValidationError("الحد الأقصى لحجم الصورة هو 2 ميجابايت")
+
 class Student(models.Model):
     """نموذج الطالب"""
     name = models.CharField(max_length=255, verbose_name="اسم الطالب")
     class_name = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='students', verbose_name="الصف")
     section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='students', verbose_name="الفصل")
-    image = models.ImageField(upload_to='students/', blank=True, null=True, verbose_name="صورة الطالب")
+    image = models.ImageField(
+        upload_to='students/',
+        blank=True,
+        null=True,
+        verbose_name="صورة الطالب",
+        validators=[validate_image_size]
+    )
+    status = models.CharField(max_length=20, default='active', verbose_name="حالة الطالب")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإنشاء")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="تاريخ التحديث")
 

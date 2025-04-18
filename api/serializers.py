@@ -33,17 +33,36 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
         return None
 
 class StudentSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Student
         fields = '__all__'
+
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
 class StudentDetailSerializer(serializers.ModelSerializer):
     class_name_display = serializers.CharField(source='class_name.name', read_only=True)
     section_display = serializers.CharField(source='section.name', read_only=True)
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Student
         fields = '__all__'
+
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:

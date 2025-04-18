@@ -1,6 +1,7 @@
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.utils import timezone
 from django.db.models import Q
 
@@ -64,6 +65,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    parser_classes = (MultiPartParser, FormParser)
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['name', 'class_name__name', 'section__name', 'created_at']
@@ -74,6 +76,11 @@ class StudentViewSet(viewsets.ModelViewSet):
             return StudentDetailSerializer
         return StudentSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
     @action(detail=False, methods=['get'])
     def by_class_section(self, request):
         class_id = request.query_params.get('class_id')
@@ -81,7 +88,7 @@ class StudentViewSet(viewsets.ModelViewSet):
 
         if class_id and section_id:
             students = Student.objects.filter(class_name_id=class_id, section_id=section_id)
-            serializer = StudentDetailSerializer(students, many=True)
+            serializer = StudentDetailSerializer(students, many=True, context={'request': request})
             return Response(serializer.data)
         return Response({"error": "Both class_id and section_id are required"}, status=status.HTTP_400_BAD_REQUEST)
 

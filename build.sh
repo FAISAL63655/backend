@@ -13,3 +13,6 @@ python manage.py collectstatic --no-input
 
 # Apply database migrations
 python manage.py migrate
+
+# Make startup script executable
+chmod +x startup.sh
