@@ -15,15 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from api.views.media_views import serve_media_file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
+
+    # Ruta personalizada para servir archivos de medios
+    re_path(r'^media/(?P<path>.*)$', serve_media_file, name='serve_media'),
 ]
 
-# Add media files serving in development and production
-# In production, WhiteNoise will handle this, but we keep it for development
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Add media files serving in development
+# In production, we use our custom view, but we keep this for development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
