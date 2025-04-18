@@ -20,5 +20,11 @@ application = get_wsgi_application()
 application = WhiteNoise(application)
 
 # Agregar soporte para servir archivos de medios en producción
-if not settings.DEBUG and hasattr(settings, 'MEDIA_ROOT') and settings.MEDIA_ROOT:
-    application.add_files(settings.MEDIA_ROOT, prefix=settings.MEDIA_URL)
+if hasattr(settings, 'MEDIA_ROOT') and settings.MEDIA_ROOT:
+    # Asegurarse de que el prefijo no tenga barras iniciales para WhiteNoise
+    media_prefix = settings.MEDIA_URL
+    if media_prefix.startswith('/'):
+        media_prefix = media_prefix[1:]
+
+    print(f"Adding media files from {settings.MEDIA_ROOT} with prefix {media_prefix}")
+    application.add_files(settings.MEDIA_ROOT, prefix=media_prefix)
