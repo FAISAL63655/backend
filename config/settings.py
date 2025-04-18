@@ -161,9 +161,34 @@ if 'RENDER' in os.environ:
 
     # Create necessary directories if they don't exist
     os.makedirs(os.path.join(MEDIA_ROOT, 'students'), exist_ok=True)
+
+    # Print debug information
+    print(f"RENDER environment detected")
+    print(f"MEDIA_ROOT set to: {MEDIA_ROOT}")
+    print(f"MEDIA_URL set to: {MEDIA_URL}")
+
+    # Verify if the directory exists and has proper permissions
+    if os.path.exists(MEDIA_ROOT):
+        print(f"MEDIA_ROOT directory exists")
+        try:
+            # Set permissions to ensure files are readable
+            os.chmod(MEDIA_ROOT, 0o755)
+            print(f"Set permissions for MEDIA_ROOT")
+
+            # Check students directory
+            students_dir = os.path.join(MEDIA_ROOT, 'students')
+            if os.path.exists(students_dir):
+                os.chmod(students_dir, 0o755)
+                print(f"Set permissions for students directory")
+        except Exception as e:
+            print(f"Error setting permissions: {e}")
+    else:
+        print(f"MEDIA_ROOT directory does not exist: {MEDIA_ROOT}")
 else:
     # Use local path for development
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    print(f"Development environment detected")
+    print(f"MEDIA_ROOT set to: {MEDIA_ROOT}")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -62,6 +62,22 @@ fi
 echo -e "${BLUE}Verificando paquetes instalados:${NC}"
 pip list | grep -E "whitenoise|pillow|django"
 
+# Ejecutar script para corregir permisos de archivos de medios
+echo -e "${BLUE}Ejecutando script para corregir permisos de archivos de medios...${NC}"
+python fix_media_permissions.py
+
+# Listar archivos en el directorio de medios después de corregir permisos
+echo -e "${BLUE}Listando archivos en el directorio de medios después de corregir permisos:${NC}"
+if [ -d "${MEDIA_DIR}" ]; then
+    echo -e "${YELLOW}Contenido de ${MEDIA_DIR}:${NC}"
+    ls -la "${MEDIA_DIR}"
+
+    if [ -d "${STUDENTS_DIR}" ]; then
+        echo -e "${YELLOW}Contenido de ${STUDENTS_DIR}:${NC}"
+        ls -la "${STUDENTS_DIR}"
+    fi
+fi
+
 # Iniciar el servidor con mayor nivel de logging
 echo -e "${GREEN}Iniciando el servidor...${NC}"
 echo -e "${YELLOW}Usando: gunicorn config.wsgi:application --log-level debug${NC}"

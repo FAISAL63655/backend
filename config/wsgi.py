@@ -51,6 +51,15 @@ if hasattr(settings, 'MEDIA_ROOT') and settings.MEDIA_ROOT:
                 print(f"Students directory exists: {students_dir}")
                 student_files = os.listdir(students_dir)
                 print(f"Files in students directory: {student_files}")
+
+                # Establecer permisos de lectura para todos los archivos
+                for file in student_files:
+                    file_path = os.path.join(students_dir, file)
+                    try:
+                        os.chmod(file_path, 0o644)
+                        print(f"Set permissions for: {file_path}")
+                    except Exception as e:
+                        print(f"Error setting permissions for {file_path}: {e}")
             else:
                 print(f"Students directory does not exist: {students_dir}")
                 # Crear el directorio si no existe
@@ -70,8 +79,17 @@ if hasattr(settings, 'MEDIA_ROOT') and settings.MEDIA_ROOT:
 
     # Agregar archivos de media a WhiteNoise
     try:
+        # Asegurarse de que WhiteNoise pueda servir archivos de medios
         application.add_files(settings.MEDIA_ROOT, prefix=media_prefix)
         print(f"Successfully added media files to WhiteNoise")
+
+        # Verificar que los archivos se hayan agregado correctamente
+        print("Checking if files were added to WhiteNoise:")
+        if hasattr(application, '_files'):
+            media_files = [f for f in application._files.keys() if f.startswith(media_prefix)]
+            print(f"Media files in WhiteNoise: {media_files}")
+        else:
+            print("WhiteNoise does not have _files attribute")
     except Exception as e:
         print(f"Error adding media files to WhiteNoise: {e}")
         # Imprimir información del sistema para depuración
