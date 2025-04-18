@@ -191,6 +191,7 @@ class Grade(models.Model):
         ('theory', "نظري"),
         ('practical', "تطبيق"),
         ('participation', "مشاركة"),
+        ('quran', "القرآن"),
         ('final', "نهائي"),
     ]
 
