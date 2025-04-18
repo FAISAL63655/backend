@@ -1,25 +1,68 @@
 #!/bin/bash
 # startup.sh
 
-# Crear directorios necesarios en el almacenamiento de Render
-if [ -d "/opt/render/project/storage" ]; then
-    echo "Creando directorios para almacenamiento de medios..."
-    mkdir -p /opt/render/project/storage/media
-    mkdir -p /opt/render/project/storage/media/students
+# Configuración de colores para mejor legibilidad
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}=== TEACHEASE BACKEND STARTUP ===${NC}"
+
+# Verificar y crear directorios necesarios en el almacenamiento de Render
+STORAGE_DIR="/opt/render/project/storage"
+MEDIA_DIR="${STORAGE_DIR}/media"
+STUDENTS_DIR="${MEDIA_DIR}/students"
+
+if [ -d "${STORAGE_DIR}" ]; then
+    echo -e "${GREEN}Directorio de almacenamiento Render encontrado: ${STORAGE_DIR}${NC}"
+
+    # Crear directorios de medios si no existen
+    echo -e "${YELLOW}Creando directorios para almacenamiento de medios...${NC}"
+    mkdir -p "${MEDIA_DIR}"
+    mkdir -p "${STUDENTS_DIR}"
 
     # Establecer permisos adecuados
-    chmod -R 755 /opt/render/project/storage/media
+    echo -e "${YELLOW}Estableciendo permisos...${NC}"
+    chmod -R 755 "${MEDIA_DIR}"
 
     # Listar los directorios para verificar
-    echo "Listando directorios de almacenamiento:"
-    ls -la /opt/render/project/storage
-    ls -la /opt/render/project/storage/media
+    echo -e "${BLUE}Listando directorios de almacenamiento:${NC}"
+    echo -e "${YELLOW}Contenido de ${STORAGE_DIR}:${NC}"
+    ls -la "${STORAGE_DIR}"
 
-    echo "Directorios de almacenamiento creados y configurados."
+    echo -e "${YELLOW}Contenido de ${MEDIA_DIR}:${NC}"
+    ls -la "${MEDIA_DIR}"
+
+    echo -e "${YELLOW}Contenido de ${STUDENTS_DIR}:${NC}"
+    if [ -d "${STUDENTS_DIR}" ]; then
+        ls -la "${STUDENTS_DIR}"
+    else
+        echo -e "${RED}El directorio de estudiantes no existe aún.${NC}"
+    fi
+
+    echo -e "${GREEN}Directorios de almacenamiento creados y configurados.${NC}"
 else
-    echo "El directorio de almacenamiento de Render no está disponible."
+    echo -e "${RED}El directorio de almacenamiento de Render no está disponible.${NC}"
+    echo -e "${YELLOW}Intentando crear directorios locales...${NC}"
+
+    # Intentar crear directorios locales
+    mkdir -p "media/students"
+    chmod -R 755 "media"
+
+    echo -e "${YELLOW}Contenido del directorio actual:${NC}"
+    ls -la
+
+    echo -e "${YELLOW}Contenido del directorio media:${NC}"
+    ls -la "media"
 fi
 
+# Verificar instalación de paquetes
+echo -e "${BLUE}Verificando paquetes instalados:${NC}"
+pip list | grep -E "whitenoise|pillow|django"
+
 # Iniciar el servidor con mayor nivel de logging
-echo "Iniciando el servidor..."
+echo -e "${GREEN}Iniciando el servidor...${NC}"
+echo -e "${YELLOW}Usando: gunicorn config.wsgi:application --log-level debug${NC}"
 gunicorn config.wsgi:application --log-level debug

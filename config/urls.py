@@ -24,6 +24,6 @@ urlpatterns = [
     path('api/', include('api.urls')),
 ]
 
-# Add media files serving in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Add media files serving in development and production
+# In production, WhiteNoise will handle this, but we keep it for development
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
