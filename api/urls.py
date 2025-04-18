@@ -6,6 +6,7 @@ from . import random_picker
 from . import whiteboard
 from . import dashboard_views
 from . import champions_views
+from . import batch_views
 
 router = DefaultRouter()
 router.register(r'classes', views.ClassViewSet)
@@ -51,4 +52,9 @@ urlpatterns = [
     path('champions/top-grades/', champions_views.get_top_grades_students, name='champions-top-grades'),
     path('champions/top-quran/', champions_views.get_top_quran_students, name='champions-top-quran'),
     path('champions/most-improved/', champions_views.get_most_improved_students, name='champions-most-improved'),
+
+    # Batch endpoints for performance optimization
+    path('grades/batch/', batch_views.get_grades_batch, name='grades-batch'),
+    path('attendances/by_date/', batch_views.get_attendance_batch, name='attendance-batch'),
+    path('assignment-submissions/by_assignment/', batch_views.get_submissions_batch, name='submissions-batch'),
 ]
