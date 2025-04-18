@@ -4,6 +4,7 @@ from . import views
 from . import reports
 from . import random_picker
 from . import whiteboard
+from . import dashboard_views
 
 router = DefaultRouter()
 router.register(r'classes', views.ClassViewSet)
@@ -34,4 +35,8 @@ urlpatterns = [
     # Whiteboard endpoints
     path('whiteboard/drawings/', whiteboard.whiteboard_drawings_list, name='whiteboard-drawings-list'),
     path('whiteboard/drawings/<int:pk>/', whiteboard.whiteboard_drawing_detail, name='whiteboard-drawing-detail'),
+
+    # Dashboard endpoints
+    path('dashboard/stats/', dashboard_views.get_dashboard_stats, name='dashboard-stats'),
+    path('dashboard/today-schedule/', dashboard_views.get_today_schedule, name='today-schedule'),
 ]
