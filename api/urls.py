@@ -39,4 +39,7 @@ urlpatterns = [
     # Dashboard endpoints
     path('dashboard/stats/', dashboard_views.get_dashboard_stats, name='dashboard-stats'),
     path('dashboard/today-schedule/', dashboard_views.get_today_schedule, name='today-schedule'),
+    path('dashboard/top-students/', dashboard_views.get_top_students, name='dashboard-top-students'),
+    path('dashboard/weekly-attendance/', dashboard_views.get_weekly_attendance, name='dashboard-weekly-attendance'),
+    path('dashboard/recent-notes/', dashboard_views.get_recent_notes, name='dashboard-recent-notes'),
 ]
