@@ -22,6 +22,12 @@ router.register(r'notes', views.NoteViewSet)
 router.register(r'notifications', views.NotificationViewSet)
 
 urlpatterns = [
+    # Batch endpoints for performance optimization - placing these first to ensure they take precedence
+    path('api/grades/batch/', batch_views.get_grades_batch, name='grades-batch'),
+    path('api/attendances/by_date/', batch_views.get_attendance_batch, name='attendance-batch'),
+    path('api/assignment-submissions/by_assignment/', batch_views.get_submissions_batch, name='submissions-batch'),
+
+    # Default router URLs
     path('', include(router.urls)),
 
     # Reports endpoints
@@ -53,8 +59,8 @@ urlpatterns = [
     path('champions/top-quran/', champions_views.get_top_quran_students, name='champions-top-quran'),
     path('champions/most-improved/', champions_views.get_most_improved_students, name='champions-most-improved'),
 
-    # Batch endpoints for performance optimization
-    path('grades/batch/', batch_views.get_grades_batch, name='grades-batch'),
-    path('attendances/by_date/', batch_views.get_attendance_batch, name='attendance-batch'),
-    path('assignment-submissions/by_assignment/', batch_views.get_submissions_batch, name='submissions-batch'),
+    # Also keep the original paths for backward compatibility
+    path('grades/batch/', batch_views.get_grades_batch, name='grades-batch-alt'),
+    path('attendances/by_date/', batch_views.get_attendance_batch, name='attendance-batch-alt'),
+    path('assignment-submissions/by_assignment/', batch_views.get_submissions_batch, name='submissions-batch-alt'),
 ]

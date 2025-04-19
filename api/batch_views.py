@@ -38,6 +38,11 @@ def get_grades_batch(request):
         # Use GradeDetailSerializer for more detailed information
         serializer = GradeDetailSerializer(grades, many=True)
 
+        # Print debug information
+        print(f"Batch grades request for students: {student_ids}")
+        print(f"Found {len(grades)} grades")
+        print(f"Query: {query}")
+
         # Return results in a format similar to other API endpoints
         return Response({
             "results": serializer.data,
