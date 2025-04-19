@@ -6,7 +6,6 @@ from . import random_picker
 from . import whiteboard
 from . import dashboard_views
 from . import champions_views
-from . import batch_views
 
 router = DefaultRouter()
 router.register(r'classes', views.ClassViewSet)
@@ -22,11 +21,6 @@ router.register(r'notes', views.NoteViewSet)
 router.register(r'notifications', views.NotificationViewSet)
 
 urlpatterns = [
-    # Batch endpoints for performance optimization - placing these first to ensure they take precedence
-    path('api/grades/batch/', batch_views.get_grades_batch, name='grades-batch'),
-    path('api/attendances/by_date/', batch_views.get_attendance_batch, name='attendance-batch'),
-    path('api/assignment-submissions/by_assignment/', batch_views.get_submissions_batch, name='submissions-batch'),
-
     # Default router URLs
     path('', include(router.urls)),
 
@@ -58,9 +52,4 @@ urlpatterns = [
     path('champions/top-grades/', champions_views.get_top_grades_students, name='champions-top-grades'),
     path('champions/top-quran/', champions_views.get_top_quran_students, name='champions-top-quran'),
     path('champions/most-improved/', champions_views.get_most_improved_students, name='champions-most-improved'),
-
-    # Also keep the original paths for backward compatibility
-    path('grades/batch/', batch_views.get_grades_batch, name='grades-batch-alt'),
-    path('attendances/by_date/', batch_views.get_attendance_batch, name='attendance-batch-alt'),
-    path('assignment-submissions/by_assignment/', batch_views.get_submissions_batch, name='submissions-batch-alt'),
 ]

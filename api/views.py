@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.utils import timezone
 from django.db.models import Q
+import logging
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 from .models import (
     Class, Section, Subject, Student, Schedule,
@@ -263,6 +267,51 @@ class GradeViewSet(viewsets.ModelViewSet):
             serializer = GradeDetailSerializer(grades, many=True)
             return Response(serializer.data)
         return Response({"error": "subject_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'], url_path='batch')
+    def batch(self, request):
+        """
+        Get grades for multiple students at once
+        """
+        try:
+            # Get student IDs from query params
+            student_ids_param = request.query_params.get('student_ids', '')
+            if not student_ids_param:
+                return Response({"error": "student_ids parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Parse student IDs
+            try:
+                student_ids = [int(id.strip()) for id in student_ids_param.split(',') if id.strip()]
+            except ValueError:
+                return Response({"error": "Invalid student_ids format"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get subject ID from query params (optional)
+            subject_id = request.query_params.get('subject_id')
+
+            # Build query
+            query = Q(student__in=student_ids)
+            if subject_id:
+                query &= Q(subject=subject_id)
+
+            # Get grades
+            grades = Grade.objects.filter(query)
+
+            # Log debug information
+            logger.info(f"Batch grades request for students: {student_ids}")
+            logger.info(f"Found {len(grades)} grades")
+            logger.info(f"Query: {query}")
+
+            # Use GradeDetailSerializer for more detailed information
+            serializer = GradeDetailSerializer(grades, many=True)
+
+            # Return results in a format similar to other API endpoints
+            return Response({
+                "results": serializer.data,
+                "count": len(serializer.data)
+            })
+        except Exception as e:
+            logger.error(f"Error in batch grades endpoint: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class NoteViewSet(viewsets.ModelViewSet):
     queryset = Note.objects.all()
