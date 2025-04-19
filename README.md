@@ -18,21 +18,23 @@ This is the backend API for the TeachEase educational management system, built w
    pip install -r requirements.txt
    ```
 
-4. Set up environment variables:
+
+
+5. Set up environment variables:
    - Copy `.env.example` to `.env`
    - Modify the values as needed
 
-5. Run migrations:
+6. Run migrations:
    ```
    python manage.py migrate
    ```
 
-6. Create a superuser:
+7. Create a superuser:
    ```
    python manage.py createsuperuser
    ```
 
-7. Run the development server:
+8. Run the development server:
    ```
    python manage.py runserver
    ```
@@ -82,6 +84,120 @@ The API provides endpoints for managing:
 
 Access the API at `/api/` when the server is running.
 
+### Batch Operations
+
+The API supports batch operations for certain resources to improve performance and reduce the number of HTTP requests.
+
+#### Batch Create Grades
+
+**Endpoint**: `POST /api/grades/batch-create/`
+
+**Request Body**:
+```json
+{
+  "grades": [
+    {
+      "student": 1,
+      "subject": 1,
+      "date": "2025-04-19",
+      "type": "theory",
+      "score": 12,
+      "max_score": 15
+    },
+    {
+      "student": 1,
+      "subject": 1,
+      "date": "2025-04-19",
+      "type": "practical",
+      "score": 4,
+      "max_score": 5
+    },
+    // More grades...
+  ]
+}
+```
+
+**Response**:
+```json
+{
+  "results": [
+    // Array of created/updated grade objects
+  ],
+  "errors": [
+    // Array of errors if any
+  ],
+  "success_count": 5,
+  "error_count": 0
+}
+```
+
+**Notes**:
+- This endpoint creates or updates multiple grades in a single request
+- If a grade with the same student, subject, type, and date already exists, it will be updated
+- The endpoint uses database transactions to ensure data integrity
+- The response includes both successful results and errors
+
+#### Batch Create Attendance Records
+
+**Endpoint**: `POST /api/attendances/batch-create/`
+
+**Request Body**:
+```json
+{
+  "attendance": [
+    {
+      "student": 1,
+      "date": "2025-04-19",
+      "status": "present",
+      "schedule": 1,
+      "class_name": 1,
+      "section": 1
+    },
+    {
+      "student": 2,
+      "date": "2025-04-19",
+      "status": "absent",
+      "schedule": 1,
+      "class_name": 1,
+      "section": 1
+    },
+    // More attendance records...
+  ]
+}
+```
+
+**Response**:
+```json
+{
+  "results": [
+    // Array of created/updated attendance records
+  ],
+  "errors": [
+    // Array of errors if any
+  ],
+  "success_count": 5,
+  "error_count": 0
+}
+```
+
+**Notes**:
+- This endpoint creates or updates multiple attendance records in a single request
+- If an attendance record with the same student and date already exists, it will be updated
+- The endpoint uses database transactions to ensure data integrity
+- The response includes both successful results and errors
+
+## Performance Optimizations
+
+- **Database connection pooling**: تحسين اتصالات قاعدة البيانات
+- **Static files served with WhiteNoise**: تقديم الملفات الثابتة بكفاءة
+- **Optimized database queries**: تحسين استعلامات قاعدة البيانات باستخدام select_related و prefetch_related
+- **Efficient file uploads and storage**: رفع وتخزين الملفات بكفاءة
+- **Local memory caching**: تخزين مؤقت للبيانات المتكررة باستخدام ذاكرة التخزين المؤقت المحلية
+- **Database indexes**: فهارس لتسريع عمليات البحث والترتيب
+- **Batch operations**: عمليات معالجة مجمعة لتقليل عدد الطلبات
+- **Real-time updates with WebSockets**: تحديثات فورية باستخدام ذاكرة التخزين المؤقت المحلية
+- **API Documentation with Swagger**: توثيق شامل لنقاط النهاية API
+
 ## Project Structure
 
 - `api/`: Main application with models, views, and serializers
@@ -99,3 +215,4 @@ Access the API at `/api/` when the server is running.
 | ALLOWED_HOSTS | Comma-separated list of allowed hosts | - |
 | DATABASE_URL | Database connection URL | - |
 | CORS_ALLOWED_ORIGINS | Comma-separated list of allowed origins for CORS | - |
+

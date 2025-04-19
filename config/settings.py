@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'corsheaders',
+    'drf_yasg',  # API documentation
+    'channels',  # WebSockets
 
     # Local apps
     'api',
@@ -253,4 +255,35 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
     ],
+}
+
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Cache time to live is 15 minutes (in seconds)
+CACHE_TTL = 60 * 15
+
+# WebSockets settings
+ASGI_APPLICATION = 'config.asgi.application'
+
+# استخدام طبقة القنوات في الذاكرة
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
+# Swagger settings
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+    },
+    'DEFAULT_INFO': 'config.urls.api_info',
 }

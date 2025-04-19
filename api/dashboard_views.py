@@ -3,12 +3,16 @@ from rest_framework.response import Response
 from django.utils import timezone
 from django.db.models import Count, Avg
 from datetime import timedelta
+from django.views.decorators.cache import cache_page
+from django.conf import settings
+from django.utils.decorators import method_decorator
 
 from .models import (
     Student, Attendance, Assignment, Schedule, Grade, Note
 )
 
 @api_view(['GET'])
+@cache_page(settings.CACHE_TTL)  # تخزين مؤقت لمدة 15 دقيقة
 def get_dashboard_stats(request):
     """
     Get dashboard statistics:
@@ -49,6 +53,7 @@ def get_dashboard_stats(request):
     })
 
 @api_view(['GET'])
+@cache_page(settings.CACHE_TTL)  # تخزين مؤقت لمدة 15 دقيقة
 def get_today_schedule(request):
     """
     Get today's schedule
@@ -100,6 +105,7 @@ def get_today_schedule(request):
         return Response([])
 
 @api_view(['GET'])
+@cache_page(settings.CACHE_TTL)  # تخزين مؤقت لمدة 15 دقيقة
 def get_top_students(request):
     """
     Get top performing students
@@ -139,6 +145,7 @@ def get_top_students(request):
         return Response([])
 
 @api_view(['GET'])
+@cache_page(settings.CACHE_TTL)  # تخزين مؤقت لمدة 15 دقيقة
 def get_weekly_attendance(request):
     """
     Get weekly attendance statistics
@@ -195,6 +202,7 @@ def get_weekly_attendance(request):
         return Response([])
 
 @api_view(['GET'])
+@cache_page(settings.CACHE_TTL)  # تخزين مؤقت لمدة 15 دقيقة
 def get_recent_notes(request):
     """
     Get recent student notes
